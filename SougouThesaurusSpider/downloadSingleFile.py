@@ -48,11 +48,14 @@ def downLoadSingleFile(url,dir,logFile):
     filename = urllib.unquote(fileStr)
     filename = filename.replace('/', '-')
     filePath = dir + filename + '.scel'   # 需要将文件名中的/替换，否则报错
+
     try:
-        with open(filePath.decode('utf8'), 'wb') as f:  # 保存中文文件名所必须的
+        #.decode('utf8')
+        with open(filePath, 'wb') as f:  # 保存中文文件名所必须的
             f.write(data)
         print filePath+' has downloaded!'
-    except:
+    except Exception as e:
+        print "error:",url,"err:",str(e)
         with open(logFile.decode('utf8'), 'a') as f:
             f.write('unexcepted error while downloading file of '+url+'\n')
         return 

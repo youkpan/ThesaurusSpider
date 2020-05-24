@@ -43,12 +43,12 @@ class downloadThread(threading.Thread):
         threading.Thread.__init__(self)
         self.fileBaseURL = 'https://shurufa.baidu.com/dict_innerid_download?innerid=' # 文件实际下载URL的共同前缀
         self.filePattern = re.compile(r'dict-name="(.*?)" dict-innerid="(\d+)"')   #在网页源码找到当前页面可下载文件的url的正则表达匹配模式
-        print '%s is created' % self.name
+        print ('%s is created' % self.name)
 
     def run(self):
         global VISITED, DOWNLOADED, DOWNLOAD_LOG, DOWNLOAD_DIR, PAGE_QUEUE
         while True:
-            print PAGE_QUEUE.qsize()
+            print( PAGE_QUEUE.qsize())
             try:
                 currentPage = PAGE_QUEUE.get()
                 currentURL = PAGE_BASE_URL+'&page=%s#page'%currentPage
@@ -74,7 +74,7 @@ class downloadThread(threading.Thread):
                     response = urllib2.urlopen(currentURL)
                     data = response.read()
                     break
-                except urllib2.HTTPError, e:
+                except urllib2.HTTPError as e:
                     if i == maxTry-1:
                         with io.open(DOWNLOAD_LOG.decode('utf8'), mode = 'a', encoding = 'utf8') as f:
                             f.write((str(e.code)+' error while parsing url '+currentURL+'\n').decode('utf8'))
@@ -108,7 +108,7 @@ class downloadThread(threading.Thread):
                         DOWNLOADED.add(fileURL)
                 finally:
                     THREAD_LOCK.release()
-                print self.name + ' is downloading' + fileName + '.......'
+                print (self.name + ' is downloading' + fileName + '.......')
 
                 # 防止500,502错误，最大尝试三次
                 maxTry = 3
@@ -116,7 +116,7 @@ class downloadThread(threading.Thread):
                     tryBest = False if m < maxTry - 1 else True
                     if downloadSingleFile.downLoadSingleFile(fileURL, fileName, DOWNLOAD_DIR, DOWNLOAD_LOG, tryBest):
                         break
-                    print '==========retrying to download file %s of url %s'%(fileName, fileURL) 
+                    print ('==========retrying to download file %s of url %s'%(fileName, fileURL) )
 
             PAGE_QUEUE.task_done()   # PAGE_QUEUE.join()阻塞直到所有任务完成，也就是说要收到从 PAGE_QUEUE 中取出的每个item的task_done消息
 
@@ -151,7 +151,7 @@ def getCategoryPages(caterotyID,downloadDIR):
             response = urllib2.urlopen(request)
             data = response.read()
             break
-        except urllib2.HTTPError, e:
+        except urllib2.HTTPError as e:
             if i == maxTry-1:
                 with io.open(DOWNLOAD_LOG.decode('utf8'), mode = 'a', encoding = 'utf8') as f:
                     f.write((str(e.code)+' error while parsing url '+PAGE_BASE_URL+'\n').decode('utf8'))
@@ -171,11 +171,11 @@ def getCategoryPages(caterotyID,downloadDIR):
 
 
 if __name__ == '__main__':
-    baseDir = 'D:/百度输入法/多线程下载' # 设置你的下载目录
+    baseDir = 'F:/hayoou/GitHub/ThesaurusSpider/BaiduTheaurusSpider/多线程下载' # 设置你的下载目录
     DOWNLOAD_LOG = baseDir+'/baiduDownload.log'
     start = time.time()
     bigCateDict, smallCateDict = getCategory.getBaiduDictCate()
-    print '===========get categories successfully================'
+    print ('===========get categories successfully================')
     threadNum = 5    # 下载的线程数目
     # 创建线程
     for i in range(threadNum):
@@ -188,4 +188,4 @@ if __name__ == '__main__':
             downloadDir = baseDir+'/%s/%s/'  %(bigCateDict[i], smallCateDict[i][j])
             getCategoryPages(j, downloadDir)
             PAGE_QUEUE.join()  # Blocks until all items in the QUEUE have been gotten and processed（necessary)
-    print 'process time:%s' % (time.time()-start)
+    print ('process time:%s' % (time.time()-start))

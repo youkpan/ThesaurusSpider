@@ -15,7 +15,7 @@ def getSogouDictCate():
     bigCatePattern = re.compile(r"href='/dict/cate/index/(\d+).*?>(.*?)<")  #
     smallCatePattern = re.compile(r'href="/dict/cate/index/(\d+)">(.*?)<')
 
-    bigCateURL = 'http://pinyin.sogou.com/dict/'
+    bigCateURL = 'http://pinyin.sogou.com/dict/cate/index/105'
     smallCateBaseURL = 'http://pinyin.sogou.com/dict/cate/index/'
     bigCateDict = {}
     smallCateDict = {}
@@ -28,6 +28,7 @@ def getSogouDictCate():
     bigCateData = response.read()
     result = re.findall(bigCatePattern,bigCateData) # 返回一个元组列表，元组的长度由正则表达决定
     for i in result:
+        #print (i[0],i[1])
         bigCateDict[i[0]] = i[1]
 
     # 从大分类中得到小分类

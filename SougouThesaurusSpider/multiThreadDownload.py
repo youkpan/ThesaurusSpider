@@ -131,10 +131,16 @@ if __name__ == '__main__':
         th = downloadThread()
         th.setDaemon(True)
         th.start()
+        
+    for i in bigCateDict:
+        for j in smallCateDict[i]:
+            print "bigCateDict:",i,"smallCateDict:",j
 
     for i in bigCateDict:
         for j in smallCateDict[i]:
-            downloadDir = baseDir+'/%s/%s/'  %(bigCateDict[i], smallCateDict[i][j])
+            print "bigCateDict:",i,"smallCateDict:",j
+            #downloadDir = baseDir+'/%s/%s/'  %(bigCateDict[i], smallCateDict[i][j])
+            downloadDir = baseDir+ "/" + str(i) + "-" +str(j)  + "-"
             downloadSingleCate(j, downloadDir)
             QUEUE.join()  # Blocks until all items in the QUEUE have been gotten and processed（necessary），
     print 'process time:%s' % (time.time()-start)
