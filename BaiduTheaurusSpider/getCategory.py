@@ -24,7 +24,8 @@ def getBaiduDictCate():
     cateBaseURL = r'https://shurufa.baidu.com/dict_list?cid='
 
     # 防止502错误
-    userAgent = generate_user_agent()
+    userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36'
+    # generate_user_agent()
     referrer = 'http://shurufa.baidu.com/dict.html'  
     headers = {}
     headers['User-Agent'] = userAgent

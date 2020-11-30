@@ -20,16 +20,16 @@ def getCategory():
         print 'unexpected error while parsing page '+baseURL
 
     cateData = response.read()
-    bigCatePattern = re.compile('"/dict_list\?sort1=(.*?)" class="title"')
+    bigCatePattern = re.compile('"/v1/list\?sort1=(.*?)" class="title"')
     bigCateList = re.findall(bigCatePattern,cateData)
     cateDict = {}  # 存储一级分类和二级分类的字典，key为一级分类，value为一级分类下的二级分类,value为List类型
     for bigCate in bigCateList:
-        cateDict[bigCate.decode('gbk')] = []  # 网页采用了gbk编码
+        cateDict[bigCate.decode('utf-8')] = []  # 网页采用了utf-8编码
         # 找到大分类下的小分类
-        smallCatePattern = re.compile('"/dict_list\?sort1=%s&sort2=(.*?)"'%bigCate)
+        smallCatePattern = re.compile('"/v1/list\?sort1=%s&sort2=(.*?)"'%bigCate)
         smallCateList = re.findall(smallCatePattern, cateData)
         for smallCate in smallCateList:
-            cateDict[bigCate.decode('gbk')].append(smallCate.decode('gbk'))
+            cateDict[bigCate.decode('utf-8')].append(smallCate.decode('utf-8'))
     return cateDict
 
 

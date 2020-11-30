@@ -43,12 +43,12 @@ class downloadThread(threading.Thread):
         threading.Thread.__init__(self)
         self.fileBaseURL = 'https://shurufa.baidu.com/dict_innerid_download?innerid=' # 文件实际下载URL的共同前缀
         self.filePattern = re.compile(r'dict-name="(.*?)" dict-innerid="(\d+)"')   #在网页源码找到当前页面可下载文件的url的正则表达匹配模式
-        print ('%s is created' % self.name)
+        print '%s is created' % self.name
 
     def run(self):
         global VISITED, DOWNLOADED, DOWNLOAD_LOG, DOWNLOAD_DIR, PAGE_QUEUE
         while True:
-            print( PAGE_QUEUE.qsize())
+            print PAGE_QUEUE.qsize()
             try:
                 currentPage = PAGE_QUEUE.get()
                 currentURL = PAGE_BASE_URL+'&page=%s#page'%currentPage
@@ -74,7 +74,7 @@ class downloadThread(threading.Thread):
                     response = urllib2.urlopen(currentURL)
                     data = response.read()
                     break
-                except urllib2.HTTPError as e:
+                except urllib2.HTTPError, e:
                     if i == maxTry-1:
                         with io.open(DOWNLOAD_LOG.decode('utf8'), mode = 'a', encoding = 'utf8') as f:
                             f.write((str(e.code)+' error while parsing url '+currentURL+'\n').decode('utf8'))
@@ -92,8 +92,8 @@ class downloadThread(threading.Thread):
             # 创建不存在的下载目录
             THREAD_LOCK.acquire()
             try:
-                if not os.path.exists(DOWNLOAD_DIR.decode('utf8')):   # DOWNLOAD_DIR 为str类型，而创建文件夹需要的是Unicode编码，所以需要decode
-                    os.makedirs(DOWNLOAD_DIR.decode('utf8'))          # 创建多层目录
+                if not os.path.exists(DOWNLOAD_DIR ):   # .decode('utf8')DOWNLOAD_DIR 为str类型，而创建文件夹需要的是Unicode编码，所以需要decode
+                    os.makedirs(DOWNLOAD_DIR)          # .decode('utf8')创建多层目录
             finally:
                 THREAD_LOCK.release()
 
@@ -108,7 +108,7 @@ class downloadThread(threading.Thread):
                         DOWNLOADED.add(fileURL)
                 finally:
                     THREAD_LOCK.release()
-                print (self.name + ' is downloading' + fileName + '.......')
+                print self.name + ' is downloading' + fileName + '.......'
 
                 # 防止500,502错误，最大尝试三次
                 maxTry = 3
@@ -116,7 +116,7 @@ class downloadThread(threading.Thread):
                     tryBest = False if m < maxTry - 1 else True
                     if downloadSingleFile.downLoadSingleFile(fileURL, fileName, DOWNLOAD_DIR, DOWNLOAD_LOG, tryBest):
                         break
-                    print ('==========retrying to download file %s of url %s'%(fileName, fileURL) )
+                    print '==========retrying to download file %s of url %s'%(fileName, fileURL) 
 
             PAGE_QUEUE.task_done()   # PAGE_QUEUE.join()阻塞直到所有任务完成，也就是说要收到从 PAGE_QUEUE 中取出的每个item的task_done消息
 
@@ -135,7 +135,8 @@ def getCategoryPages(caterotyID,downloadDIR):
     pagePattern = re.compile(r'page=(\d+)#page')    # 在网页源码找到其他页面的URL的正则表达匹配模式
     
     # 防止502错误
-    userAgent = generate_user_agent()
+    userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36'
+    #generate_user_agent()
     referrer = 'http://shurufa.baidu.com/dict.html'  
     headers = {}
     headers['User-Agent'] = userAgent
@@ -151,7 +152,7 @@ def getCategoryPages(caterotyID,downloadDIR):
             response = urllib2.urlopen(request)
             data = response.read()
             break
-        except urllib2.HTTPError as e:
+        except urllib2.HTTPError, e:
             if i == maxTry-1:
                 with io.open(DOWNLOAD_LOG.decode('utf8'), mode = 'a', encoding = 'utf8') as f:
                     f.write((str(e.code)+' error while parsing url '+PAGE_BASE_URL+'\n').decode('utf8'))
@@ -168,14 +169,18 @@ def getCategoryPages(caterotyID,downloadDIR):
             PAGE_QUEUE.put(page)
         
 
-
-
 if __name__ == '__main__':
-    baseDir = 'F:/hayoou/GitHub/ThesaurusSpider/BaiduTheaurusSpider/多线程下载' # 设置你的下载目录
-    DOWNLOAD_LOG = baseDir+'/baiduDownload.log'
+    baseDir = "./multi" 
+    DOWNLOAD_LOG = baseDir+'/baiduDownload-cat.log'
     start = time.time()
     bigCateDict, smallCateDict = getCategory.getBaiduDictCate()
-    print ('===========get categories successfully================')
+    print '===========get categories successfully================'
+
+    for i in bigCateDict:
+        for j in smallCateDict[i]:
+            with io.open(DOWNLOAD_LOG.decode('utf8'), mode = 'w', encoding = 'utf8') as f:
+                f.write((bigCateDict[i] +";"+smallCateDict[i][j]).decode("utf8"))
+    exit()
     threadNum = 5    # 下载的线程数目
     # 创建线程
     for i in range(threadNum):
@@ -185,7 +190,8 @@ if __name__ == '__main__':
 
     for i in bigCateDict:
         for j in smallCateDict[i]:
+
             downloadDir = baseDir+'/%s/%s/'  %(bigCateDict[i], smallCateDict[i][j])
             getCategoryPages(j, downloadDir)
             PAGE_QUEUE.join()  # Blocks until all items in the QUEUE have been gotten and processed（necessary)
-    print ('process time:%s' % (time.time()-start))
+    print 'process time:%s' % (time.time()-start)

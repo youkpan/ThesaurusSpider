@@ -15,7 +15,7 @@ def getSogouDictCate():
     bigCatePattern = re.compile(r"href='/dict/cate/index/(\d+).*?>(.*?)<")  #
     smallCatePattern = re.compile(r'href="/dict/cate/index/(\d+)">(.*?)<')
 
-    bigCateURL = 'http://pinyin.sogou.com/dict/cate/index/105'
+    bigCateURL = 'http://pinyin.sogou.com/dict/cate/index/404'
     smallCateBaseURL = 'http://pinyin.sogou.com/dict/cate/index/'
     bigCateDict = {}
     smallCateDict = {}

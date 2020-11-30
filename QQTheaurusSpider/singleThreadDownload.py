@@ -84,7 +84,7 @@ def downloadSingleType(bigCate,smallCate,downloadDir,logFile):
 
 
 if __name__ == '__main__':
-    baseDir = 'G:/QQ/输入法'  # 路径最后不能添加/
+    baseDir = '/data/tgz/ThesaurusSpider/QQTheaurusSpider/QQ/'  # 路径最后不能添加/
     logFile = baseDir+'/'+'download.log'
     category = getQQCategory.getCategory()
     for bigCate in category:

@@ -16,7 +16,9 @@ import time
 
 import downloadSingleFile
 import getQQCategory
-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 # 全局变量
 queue = Queue.Queue()   # 存储待访问的url
 visited = set()     # 存储已经访问的url
@@ -105,21 +107,21 @@ def downloadSingleType(bigCate,smallCate,baseDir):
     :return: None
     """
     global smallCateURL, downloadDir, queue, logFile
-    smallCateURL = 'http://dict.qq.pinyin.cn/dict_list?sort1=%s&sort2=%s' %(urllib2.quote(bigCate), urllib2.quote(smallCate))  # url编码
+    smallCateURL = 'http://dict.qq.pinyin.cn/v1/list?sort1=%s&sort2=%s' %(urllib2.quote(bigCate), urllib2.quote(smallCate))  # url编码
     if baseDir[-1] == '/':
         print '路径 '+baseDir+' 末尾不能有/'
         return
     downloadDir = baseDir+'/'+bigCate+'/'+smallCate
     logFile = baseDir+'/download.log'
-    if not os.path.exists(downloadDir.decode('utf8')):  # 目录不存在的时候创建目录
-        os.makedirs(downloadDir.decode('utf8'))
+    if not os.path.exists(downloadDir ):  # 目录不存在的时候创建目录
+        os.makedirs(downloadDir )
     queue.put(smallCateURL)
 
 if __name__ == '__main__':
     start = time.time()
-    baseDir = 'G:/各大输入法词库/QQ/多线程下载'  # 下载的目录，最后不能带有/
+    baseDir = '/data/tgz/ThesaurusSpider/QQTheaurusSpider/QQ'  # 下载的目录，最后不能带有/
     category = getQQCategory.getCategory()
-
+    print category
     threadNum = 5    # 下载的线程数目
     for i in range(threadNum):
         th = downloadThread()

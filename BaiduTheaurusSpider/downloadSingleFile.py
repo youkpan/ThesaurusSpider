@@ -20,6 +20,10 @@ def downLoadSingleFile(url, fileName, downloadDir, downloadLog, tryBest = True):
     :param tryBest: 是否达到尝试的最大次数，默认为1次，以此作为是否写日志的依据
     :return:boolean: 表示文件是否成功下载，便于调用的程序尝试重复下载
     """
+
+    with io.open(downloadLog.decode('utf8'), mode = 'a', encoding = 'utf8') as f:
+        f.write((fileName + ";"+url+"\n" ).decode('utf8'))
+    return True
     userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36'
     referrer = 'http://shurufa.baidu.com/dict.html'  # 百度词库貌似没有防盗链,但这里为了保险还是在请求时带上referer
     headers = {}
